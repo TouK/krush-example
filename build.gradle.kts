@@ -2,12 +2,12 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.50"
-    kotlin("kapt")  version "1.3.50"
+    kotlin("jvm") version "1.3.60"
+    kotlin("kapt") version "1.3.60"
 }
 
 val junitVersion = "5.5.2"
-val krushVersion = "0.1.0-SNAPSHOT"
+val krushVersion = "0.1.0"
 
 group = "pl.touk"
 version = "1.0-SNAPSHOT"
@@ -15,7 +15,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven(url = "https://dl.bintray.com/kotlin/exposed")
-    maven(url = "https://philanthropist.touk.pl/nexus/content/repositories/snapshots")
+    maven(url = "https://philanthropist.touk.pl/nexus/content/repositories/releases")
 }
 
 dependencies {
