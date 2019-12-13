@@ -1,17 +1,19 @@
 package pl.touk.krush
 
+import io.requery.*
 import java.time.LocalDate
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
 
 @Entity
-data class Book(
-    @Id @GeneratedValue
-    val id: Long? = null,
+@Table(name = "BOOK")
+interface Book : Persistable {
+    @get:Key
+    @get:io.requery.Generated
+    val id: Long
 
-    val isbn: String,
-    val author: String,
-    val title: String,
+    val isbn: String
+    val author: String
+    val title: String
+
+    @get:Column(name = "PUBLISH_DATE")
     val publishDate: LocalDate
-)
+}
