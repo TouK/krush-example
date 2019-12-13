@@ -4,16 +4,13 @@ import io.requery.*
 import java.time.LocalDate
 
 @Entity
-@Table(name = "BOOK")
 interface Book : Persistable {
-    @get:Key
-    @get:io.requery.Generated
+    @get:Key @get:Generated
     val id: Long
 
     val isbn: String
     val author: String
     val title: String
 
-    @get:Column(name = "PUBLISH_DATE")
     val publishDate: LocalDate
 }
