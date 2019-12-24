@@ -25,4 +25,11 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      - run: gradle test
+      - run:
+          name: Test
+          command: gradle test
+
+      - run:
+          name: Sputnik
+          command: python <(curl -s https://raw.githubusercontent.com/TouK/sputnik-ci/master/sputnik-ci.py)
+

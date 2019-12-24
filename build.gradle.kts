@@ -7,7 +7,7 @@ plugins {
 }
 
 val junitVersion = "5.5.2"
-val krushVersion = "0.1.0"
+val krushVersion = "0.2.0"
 
 group = "pl.touk"
 version = "1.0-SNAPSHOT"
