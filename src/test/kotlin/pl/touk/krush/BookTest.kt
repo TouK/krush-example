@@ -34,6 +34,9 @@ class BookTest {
             val persistedBook = BookTable.insert(book)
             assertThat(persistedBook.id).isNotNull()
 
+            val unused = 1
+            val TEST = 1
+
             // when
             val selectedBooks = (BookTable)
                 .select { BookTable.author like "Martin K%" }
@@ -42,6 +45,13 @@ class BookTest {
             // then
             assertThat(selectedBooks).containsOnly(persistedBook)
         }
+    }
+
+    /**
+     * comment
+     */
+    private fun a_test() {
+
     }
 
 }
