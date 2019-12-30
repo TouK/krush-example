@@ -1,2 +1,2 @@
 # krush-example
-Example project using krush
+Example project using [Krush](https://github.com/TouK/krush)
