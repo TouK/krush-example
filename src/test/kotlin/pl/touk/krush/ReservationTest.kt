@@ -5,6 +5,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 typealias WhereEx = SqlExpressionBuilder.() -> Op<Boolean>
 
@@ -19,7 +20,36 @@ class ReservationTest {
     }
 
     @Test
-    fun shouldUpdateReservation() {
+    fun shouldUpdateUsingExposed() {
+        transaction {
+            SchemaUtils.create(ReservationTable)
+
+            // given
+            val reservation = Reservation().reserve().let(ReservationTable::insert)
+            val byUid: WhereEx = { ReservationTable.uid eq reservation.uid }
+            val persistedReservation = ReservationTable.select(byUid).singleOrNull()?.toReservation()
+            assertThat(persistedReservation?.status).isEqualTo(Status.RESERVED)
+            assertThat(persistedReservation?.reservedAt).isEqualTo(reservation.reservedAt)
+            assertThat(persistedReservation?.freedAt).isNull()
+
+            // when
+            val freedAt = LocalDateTime.now()
+            ReservationTable.update(byUid) {
+                it[ReservationTable.status] = Status.FREE
+                it[ReservationTable.freedAt] = freedAt
+            }
+
+            // then
+            val updatedReservation = ReservationTable.select(byUid).singleOrNull()?.toReservation()
+            assertThat(updatedReservation?.status).isEqualTo(Status.FREE)
+            assertThat(updatedReservation?.reservedAt).isEqualTo(reservation.reservedAt)
+            assertThat(updatedReservation?.freedAt).isEqualTo(freedAt)
+        }
+
+    }
+
+    @Test
+    fun shouldUpdateWithFrom() {
         transaction {
             SchemaUtils.create(ReservationTable)
 
