@@ -28,8 +28,8 @@ dependencies {
 
     testApi("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testApi("org.assertj:assertj-core:3.13.2")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-    testRuntime("ch.qos.logback:logback-classic:1.2.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testRuntimeOnly("ch.qos.logback:logback-classic:1.2.3")
 
 }
 
