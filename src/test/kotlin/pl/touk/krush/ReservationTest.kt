@@ -1,11 +1,14 @@
 package pl.touk.krush
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.within
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import pl.touk.krush.ReservationTable.freedAt
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 typealias WhereEx = SqlExpressionBuilder.() -> Op<Boolean>
 
@@ -29,21 +32,25 @@ class ReservationTest {
             val byUid: WhereEx = { ReservationTable.uid eq reservation.uid }
             val persistedReservation = ReservationTable.select(byUid).singleOrNull()?.toReservation()
             assertThat(persistedReservation?.status).isEqualTo(Status.RESERVED)
-            assertThat(persistedReservation?.reservedAt).isEqualTo(reservation.reservedAt)
+            assertThat(persistedReservation?.reservedAt).isCloseTo(reservation.reservedAt, within(10, ChronoUnit.MILLIS))
             assertThat(persistedReservation?.freedAt).isNull()
 
             // when
             val freedAt = LocalDateTime.now()
-            ReservationTable.update(byUid) {
-                it[ReservationTable.status] = Status.FREE
-                it[ReservationTable.freedAt] = freedAt
+            val updated = ReservationTable.update({
+                (ReservationTable.uid eq reservation.uid) and (ReservationTable.status eq Status.RESERVED) }) {
+                    it[ReservationTable.status] = Status.FREE
+                    it[ReservationTable.freedAt] = freedAt
+                }
+            if (updated < 1) {
+                throw IllegalStateException("Wrong status!")
             }
 
             // then
             val updatedReservation = ReservationTable.select(byUid).singleOrNull()?.toReservation()
             assertThat(updatedReservation?.status).isEqualTo(Status.FREE)
-            assertThat(updatedReservation?.reservedAt).isEqualTo(reservation.reservedAt)
-            assertThat(updatedReservation?.freedAt).isEqualTo(freedAt)
+            assertThat(updatedReservation?.reservedAt).isCloseTo(reservation.reservedAt, within(10, ChronoUnit.MILLIS))
+            assertThat(updatedReservation?.freedAt).isCloseTo(freedAt, within(10, ChronoUnit.MILLIS))
         }
 
     }
@@ -58,7 +65,7 @@ class ReservationTest {
             val byUid: WhereEx = { ReservationTable.uid eq reservation.uid }
             val persistedReservation = ReservationTable.select(byUid).singleOrNull()?.toReservation()
             assertThat(persistedReservation?.status).isEqualTo(Status.RESERVED)
-            assertThat(persistedReservation?.reservedAt).isEqualTo(reservation.reservedAt)
+            assertThat(persistedReservation?.reservedAt).isCloseTo(reservation.reservedAt, within(10, ChronoUnit.MILLIS))
             assertThat(persistedReservation?.freedAt).isNull()
 
             // when
@@ -68,8 +75,8 @@ class ReservationTest {
             // then
             val updatedReservation = ReservationTable.select(byUid).singleOrNull()?.toReservation()
             assertThat(updatedReservation?.status).isEqualTo(Status.FREE)
-            assertThat(updatedReservation?.reservedAt).isEqualTo(reservation.reservedAt)
-            assertThat(updatedReservation?.freedAt).isEqualTo(freedReservation.freedAt)
+            assertThat(updatedReservation?.reservedAt).isCloseTo(reservation.reservedAt, within(10, ChronoUnit.MILLIS))
+            assertThat(updatedReservation?.freedAt).isCloseTo(freedReservation.freedAt, within(10, ChronoUnit.MILLIS))
         }
     }
 }
