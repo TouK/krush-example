@@ -1,20 +1,21 @@
 package pl.touk.krush
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
-class ArticleTest {
+class ArticleTest : BaseDatabaseTest() {
 
-    companion object {
-        @BeforeAll
-        @JvmStatic
-        fun connect() {
-            Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
+    @AfterEach
+    internal fun tearDown() {
+        transaction {
+            ArticleTagsTable.deleteAll()
+            ArticleTable.deleteAll()
+            TagTable.deleteAll()
         }
     }
 
